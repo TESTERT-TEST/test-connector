@@ -1,4 +1,4 @@
-name: Build Marmara Connector
+name: Build Coin Connector Docker
 
 on:
   push:
@@ -22,13 +22,13 @@ jobs:
           docker rm -f build-container
       
       - name: Upload Build Artifacts (Linux AppImage)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: target/*.deb
           retention-days: 7
       
       - name: Upload Build Artifacts (Linux Portable)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: target/MarmaraConnector-*
           retention-days: 7
@@ -47,13 +47,13 @@ jobs:
           docker rm -f build-windows-container
 
       - name: Upload Build Artifacts (Windows executable)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: ./target/*.exe
           retention-days: 7
 
       - name: Upload Build Artifacts (Windows Portable)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: ./target/MarmaraConnector*
           retention-days: 7
