@@ -1,0 +1,59 @@
+name: Build Marmara Connector
+
+on:
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches: 
+      - master
+
+jobs:
+  build_Debian:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build with Docker
+        run: |
+          docker build -t marmara-connector .
+          docker create --name build-container marmara-connector
+          docker start build-container
+          docker cp build-container:/app/target/ ./target
+          docker rm -f build-container
+      
+      - name: Upload Build Artifacts (Linux AppImage)
+        uses: actions/upload-artifact@v2
+        with:
+          path: target/*.deb
+          retention-days: 7
+      
+      - name: Upload Build Artifacts (Linux Portable)
+        uses: actions/upload-artifact@v2
+        with:
+          path: target/MarmaraConnector-*
+          retention-days: 7
+          
+  build_Windows:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build with Docker (Windows)
+        run: |
+          # Dockerfile для Windows (предполагается, что он создан)
+          docker build -t marmara-connector-windows -f Dockerfile.windows .
+          docker create --name build-windows-container marmara-connector-windows
+          docker start build-windows-container
+          docker cp build-windows-container:/app/target/ ./target
+          docker rm -f build-windows-container
+
+      - name: Upload Build Artifacts (Windows executable)
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./target/*.exe
+          retention-days: 7
+
+      - name: Upload Build Artifacts (Windows Portable)
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./target/MarmaraConnector*
+          retention-days: 7
